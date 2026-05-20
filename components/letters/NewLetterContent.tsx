@@ -5,18 +5,15 @@ import { LetterEditor } from "@/components/letters/LetterEditor";
 import { LetterPaper } from "@/components/letters/LetterPaper";
 import { SendLetterButton } from "@/components/letters/SendLetterButton";
 import { PaperCard } from "@/components/shared/PaperCard";
+import type { Penpal } from "@/src/lib/db/penpals";
 import { mockPenpals } from "@/src/lib/mock/penpals";
 
 type NewLetterContentProps = {
-  penpalId?: string;
+  recipient?: Penpal;
 };
 
-export function NewLetterContent({ penpalId = "luna" }: NewLetterContentProps) {
+export function NewLetterContent({ recipient = mockPenpals[0] }: NewLetterContentProps) {
   const [content, setContent] = useState("");
-  const recipient =
-    mockPenpals.find((penpal) => penpal.id === penpalId) ??
-    mockPenpals.find((penpal) => penpal.id === "luna") ??
-    mockPenpals[0];
 
   return (
     <div className="space-y-section">
@@ -44,7 +41,11 @@ export function NewLetterContent({ penpalId = "luna" }: NewLetterContentProps) {
         <LetterEditor value={content} onChange={setContent} />
       </LetterPaper>
       <div className="pt-1">
-        <SendLetterButton disabled={content.trim().length < 8} penpalId={recipient.id} />
+        <SendLetterButton
+          content={content}
+          disabled={content.trim().length < 8}
+          penpalId={recipient.id}
+        />
       </div>
     </div>
   );

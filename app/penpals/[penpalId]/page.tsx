@@ -3,7 +3,8 @@ import { AppShell } from "@/components/layout/AppShell";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PaperCard } from "@/components/shared/PaperCard";
-import { findMockPenpal } from "@/src/lib/mock/penpals";
+import { createClient } from "@/lib/supabase/server";
+import { getUserPenpals } from "@/src/lib/db/userPenpals";
 
 type PenpalDetailPageProps = {
   params: Promise<{
@@ -13,7 +14,12 @@ type PenpalDetailPageProps = {
 
 export default async function PenpalDetailPage({ params }: PenpalDetailPageProps) {
   const { penpalId } = await params;
-  const penpal = findMockPenpal(penpalId);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const penpals = user ? await getUserPenpals(user.id) : [];
+  const penpal = penpals.find((item) => item.id === penpalId);
 
   return (
     <AppShell>

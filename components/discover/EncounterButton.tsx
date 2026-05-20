@@ -4,13 +4,27 @@ import { cn } from "@/lib/utils";
 
 type EncounterButtonProps = {
   className?: string;
+  disabled?: boolean;
+  isLoading?: boolean;
+  label: string;
+  onClick: () => void;
 };
 
-export function EncounterButton({ className }: EncounterButtonProps) {
+export function EncounterButton({
+  className,
+  disabled,
+  isLoading,
+  label,
+  onClick,
+}: EncounterButtonProps) {
   return (
-    <PrimaryActionButton className={cn("w-full", className)}>
+    <PrimaryActionButton
+      className={cn("w-full", className)}
+      disabled={disabled || isLoading}
+      onClick={onClick}
+    >
       <Send className="size-4" />
-       继续探索远方的信号
+      {isLoading ? "正在辨认远方的信号" : label}
     </PrimaryActionButton>
   );
 }

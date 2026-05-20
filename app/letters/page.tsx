@@ -2,8 +2,16 @@ import { ChoosePenpalContent } from "@/components/letters/ChoosePenpalContent";
 import { AppShell } from "@/components/layout/AppShell";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { createClient } from "@/lib/supabase/server";
+import { getUserPenpals } from "@/src/lib/db/userPenpals";
 
-export default function LettersPage() {
+export default async function LettersPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const penpals = user ? await getUserPenpals(user.id) : [];
+
   return (
     <AppShell>
       <MobileHeader
@@ -13,7 +21,7 @@ export default function LettersPage() {
         action="none"
       />
       <PageContainer>
-        <ChoosePenpalContent />
+        <ChoosePenpalContent penpals={penpals} />
       </PageContainer>
     </AppShell>
   );

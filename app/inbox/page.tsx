@@ -4,9 +4,67 @@ import { InboxContent } from "@/components/inbox/InboxContent";
 import { AppShell } from "@/components/layout/AppShell";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { createClient } from "@/lib/supabase/server";
+import { getUserLetters } from "@/src/lib/db/letters";
+import { getRepliesByUser } from "@/src/lib/db/replies";
+import {
+  getUserPenpalDiscoveries,
+  getUserPenpals,
+  isPenpalDiscoveredForLetter,
+} from "@/src/lib/db/userPenpals";
 import inboxBackground from "@/.docs/bg1.png";
 
-export default function InboxPage() {
+type InboxPageProps = {
+  searchParams: Promise<{
+    newReplyId?: string;
+    tab?: string;
+  }>;
+};
+
+export default async function InboxPage({ searchParams }: InboxPageProps) {
+  const { newReplyId, tab } = await searchParams;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [penpals, penpalDiscoveries, letters, replies] = user
+    ? await Promise.all([
+        getUserPenpals(user.id),
+        getUserPenpalDiscoveries(user.id),
+        getUserLetters(user.id),
+        getRepliesByUser(user.id),
+      ])
+    : [[], [], [], []];
+  const repliesByLetterId = new Map(
+    replies.map((reply) => [
+      reply.letterId,
+      {
+        id: reply.id,
+        content: reply.content,
+        isRead: reply.isRead,
+        createdAt: reply.createdAt,
+      },
+    ])
+  );
+  const discoveriesByPenpalId = new Map(
+    penpalDiscoveries.map((discovery) => [
+      discovery.penpalId,
+      discovery.discoveredAt,
+    ])
+  );
+  const lettersWithReplies = letters.map((letter) => ({
+    ...letter,
+    penpalDiscovered:
+      letter.status === "replied"
+        ? Boolean(repliesByLetterId.get(letter.id))
+        : discoveriesByPenpalId.has(letter.penpalId) &&
+          isPenpalDiscoveredForLetter({
+            discoveredAt: discoveriesByPenpalId.get(letter.penpalId),
+            letterCreatedAt: letter.createdAt,
+          }),
+    reply: repliesByLetterId.get(letter.id) ?? null,
+  }));
+
   return (
     <AppShell>
       <div className="relative min-h-[calc(100dvh-96px)] overflow-hidden">
@@ -28,7 +86,12 @@ export default function InboxPage() {
           className="relative z-10 [&_button]:bg-paper-soft/70 [&_button]:shadow-sm [&_h1]:drop-shadow-[0_1px_0_rgba(255,248,232,0.75)] [&_p]:drop-shadow-[0_1px_0_rgba(255,248,232,0.75)]"
         />
         <PageContainer className="relative z-10">
-          <InboxContent />
+          <InboxContent
+            hasPenpals={penpals.length > 0}
+            initialTab={tab === "sent" ? "sent" : "inbox"}
+            letters={lettersWithReplies}
+            newReplyId={newReplyId}
+          />
         </PageContainer>
       </div>
     </AppShell>

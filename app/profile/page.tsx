@@ -2,8 +2,31 @@ import { AppShell } from "@/components/layout/AppShell";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { ProfilePlaceholder } from "@/components/profile/ProfilePlaceholder";
+import { SignOutButton } from "@/components/profile/SignOutButton";
+import { createClient } from "@/lib/supabase/server";
+import { getUserLetters } from "@/src/lib/db/letters";
+import { getUserPenpals } from "@/src/lib/db/userPenpals";
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [profileResult, penpals, letters] = user
+    ? await Promise.all([
+        supabase
+          .from("profiles")
+          .select("nickname")
+          .eq("id", user.id)
+          .maybeSingle(),
+        getUserPenpals(user.id),
+        getUserLetters(user.id),
+      ])
+    : [{ data: null }, [], []];
+
+  const profile = profileResult.data;
+
   return (
     <AppShell>
       <MobileHeader
@@ -11,7 +34,10 @@ export default function ProfilePage() {
         subtitle={"\u6574\u7406\u4fe1\u4ef6\u3001\u7b14\u53cb\u548c\u56de\u5fc6"}
       />
       <PageContainer>
-        <ProfilePlaceholder />
+        <ProfilePlaceholder letters={letters} nickname={profile?.nickname} penpals={penpals} />
+        <div className="mt-5">
+          <SignOutButton />
+        </div>
       </PageContainer>
     </AppShell>
   );

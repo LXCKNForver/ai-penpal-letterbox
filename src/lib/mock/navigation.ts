@@ -7,3 +7,4 @@ export const bottomNavItems = [
   { type: "link" as const, href: "/letters", label: "\u5199\u4fe1", icon: Pencil },
   { type: "link" as const, href: "/profile", label: "\u6211\u7684", icon: UserRound },
 ];
+ 

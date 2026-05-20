@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import type { FormEvent } from "react";
+import { useState } from "react";
 import { Mail, Stamp } from "lucide-react";
 import { PrimaryActionButton } from "@/components/shared/PrimaryActionButton";
 import { PaperCard } from "@/components/shared/PaperCard";
 import { Input } from "@/components/ui/input";
 import { WashiTape } from "@/components/decorative/WashiTape";
 import { WaxSeal } from "@/components/decorative/WaxSeal";
+import { createClient } from "@/lib/supabase/client";
 
 type AuthLetterCardProps = {
   mode: "login" | "register";
@@ -36,6 +39,72 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
   const router = useRouter();
   const content = copy[mode];
   const isRegister = mode === "register";
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+    const nickname = String(formData.get("nickname") ?? "").trim();
+    const supabase = createClient();
+
+    if (isRegister && !nickname) {
+      setError("\u8bf7\u7ed9\u4f60\u7684\u4fe1\u7bb1\u53d6\u4e00\u4e2a\u6e29\u67d4\u7684\u540d\u5b57\u3002");
+      setIsLoading(false);
+      return;
+    }
+
+    const authResult = isRegister
+      ? await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              nickname,
+            },
+          },
+        })
+      : await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+    if (authResult.error) {
+      setError(authResult.error.message);
+      setIsLoading(false);
+      return;
+    }
+
+    if (isRegister) {
+      const userId = authResult.data.user?.id;
+
+      if (!userId) {
+        setError("\u6ce8\u518c\u6210\u529f\u524d\u8fd8\u9700\u8981\u786e\u8ba4\u90ae\u7bb1\uff0c\u8bf7\u5148\u6253\u5f00\u90ae\u7bb1\u91cc\u7684\u786e\u8ba4\u4fe1\u3002");
+        setIsLoading(false);
+        return;
+      }
+
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: userId,
+        nickname,
+        avatar_url: null,
+      });
+
+      if (profileError) {
+        setError(profileError.message);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    router.replace("/inbox");
+    router.refresh();
+  }
 
   return (
     <div className="flex min-h-dvh flex-col justify-center px-page py-8">
@@ -56,19 +125,16 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
           MAIL
         </div>
 
-        <form
-          className="space-y-4 pr-10"
-          onSubmit={(event) => {
-            event.preventDefault();
-            router.push("/inbox");
-          }}
-        >
+        <form className="space-y-4 pr-10" onSubmit={handleSubmit}>
           {isRegister ? (
             <label className="block space-y-1.5">
               <span className="text-xs font-medium text-ink-muted">{"\u6635\u79f0"}</span>
               <Input
                 className="h-11 rounded-card border-border bg-paper-soft/70 px-3 text-sm text-ink placeholder:text-ink-muted/45"
+                disabled={isLoading}
+                name="nickname"
                 placeholder={"\u6bd4\u5982\uff1a\u5c0f\u7b14\u53cb"}
+                required
                 type="text"
               />
             </label>
@@ -78,7 +144,10 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
             <span className="text-xs font-medium text-ink-muted">{"\u90ae\u7bb1"}</span>
             <Input
               className="h-11 rounded-card border-border bg-paper-soft/70 px-3 text-sm text-ink placeholder:text-ink-muted/45"
+              disabled={isLoading}
+              name="email"
               placeholder="you@example.com"
+              required
               type="email"
             />
           </label>
@@ -87,13 +156,27 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
             <span className="text-xs font-medium text-ink-muted">{"\u5bc6\u7801"}</span>
             <Input
               className="h-11 rounded-card border-border bg-paper-soft/70 px-3 text-sm text-ink placeholder:text-ink-muted/45"
+              disabled={isLoading}
+              minLength={6}
+              name="password"
               placeholder={"\u8f93\u5165\u4f60\u7684\u5bc6\u7801"}
+              required
               type="password"
             />
           </label>
 
-          <PrimaryActionButton className="mt-2 min-h-12 w-full" type="submit">
-            {content.button}
+          {error ? (
+            <p className="rounded-card border border-stamp-red/25 bg-stamp-red/10 px-3 py-2 text-xs leading-5 text-ink">
+              {error}
+            </p>
+          ) : null}
+
+          <PrimaryActionButton
+            className="mt-2 min-h-12 w-full"
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading ? "\u6b63\u5728\u6574\u7406\u4fe1\u7bb1..." : content.button}
           </PrimaryActionButton>
         </form>
 

@@ -8,19 +8,19 @@ type InboxTabsProps = {
 };
 
 const tabs = [
-  { value: "inbox" as const, label: "收件箱" },
-  { value: "sent" as const, label: "已寄出" },
+  { value: "inbox" as const, label: "\u7b49\u5f85\u56de\u4fe1" },
+  { value: "sent" as const, label: "\u5df2\u6536\u5230" },
 ];
 
 export function InboxTabs({ value, onChange }: InboxTabsProps) {
   return (
-    <div className="grid grid-cols-2 rounded-[16px] border border-[#d7c39f] bg-[#efe2c6] p-1">
+    <div className="grid grid-cols-2 rounded-[16px] border border-border bg-paper-deep p-1">
       {tabs.map((tab) => (
         <button
           key={tab.value}
           className={cn(
-            "rounded-[12px] px-3 py-2 text-sm font-medium text-[#756247] transition",
-            value === tab.value && "bg-[#fff8e8] text-[#4d402f] shadow-sm"
+            "rounded-[12px] px-3 py-2 text-sm font-medium text-ink-muted transition",
+            value === tab.value && "bg-paper-soft text-ink shadow-sm"
           )}
           type="button"
           onClick={() => onChange(tab.value)}
