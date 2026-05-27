@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { toast } from "sonner";
 import { EmptyInbox } from "@/components/inbox/EmptyInbox";
 import { InboxTabs } from "@/components/inbox/InboxTabs";
 import { LetterLifecycleCard } from "@/components/inbox/LetterLifecycleCard";
+import { useI18n } from "@/src/i18n/useI18n";
 import type { LetterWithPenpal } from "@/types/letter";
 
 type InboxContentProps = {
@@ -14,37 +16,33 @@ type InboxContentProps = {
   newReplyId?: string;
 };
 
+const sectionVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 8,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.32,
+      ease: "easeOut",
+    },
+    y: 0,
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.24,
+      ease: "easeOut",
+    },
+    y: 8,
+  },
+};
+
 function getReplyTime(letter: LetterWithPenpal) {
   const time = new Date(letter.reply?.createdAt ?? letter.createdAt ?? 0).getTime();
 
   return Number.isNaN(time) ? 0 : time;
-}
-
-function getInboxNotice({
-  repliedCount,
-  unreadCount,
-}: {
-  repliedCount: number;
-  unreadCount: number;
-}) {
-  if (unreadCount > 0) {
-    return {
-      title: unreadCount === 1 ? "有 1 封新回信" : `有 ${unreadCount} 封新回信`,
-      subtitle: "慢慢读",
-    };
-  }
-
-  if (repliedCount > 0) {
-    return {
-      title: "今天的信都读完了",
-      subtitle: "信箱安静下来了",
-    };
-  }
-
-  return {
-    title: "还没有收到回信",
-    subtitle: "再等等风",
-  };
 }
 
 export function InboxContent({
@@ -53,6 +51,7 @@ export function InboxContent({
   letters,
   newReplyId,
 }: InboxContentProps) {
+  const { t } = useI18n();
   const [tab, setTab] = useState<"inbox" | "sent">(initialTab);
   const repliedLetters = useMemo(
     () =>
@@ -68,19 +67,41 @@ export function InboxContent({
   const hasAnyLetters = letters.length > 0;
   const repliedCount = repliedLetters.length;
   const unreadCount = repliedLetters.filter((letter) => !letter.reply?.isRead).length;
-  const notice = getInboxNotice({ repliedCount, unreadCount });
+  const notice =
+    unreadCount > 0
+      ? {
+          title:
+            unreadCount === 1
+              ? t("inbox.notice.unreadOne")
+              : t("inbox.notice.unreadMany", { count: unreadCount }),
+          subtitle: t("inbox.tabs.received"),
+        }
+      : repliedCount > 0
+        ? {
+            title: t("inbox.notice.readAll"),
+            subtitle: t("inbox.notice.quiet"),
+          }
+        : {
+            title: t("inbox.notice.noReply"),
+            subtitle: t("inbox.notice.waitWind"),
+          };
 
   useEffect(() => {
     if (newReplyId) {
-      toast("窗边多了一封新的来信");
+      toast(t("inbox.notice.newReplyToast"));
     }
-  }, [newReplyId]);
+  }, [newReplyId, t]);
 
   if (!hasPenpals && !hasAnyLetters) {
     return (
-      <div className="space-y-5 pt-[190px]">
+      <motion.div
+        animate="visible"
+        className="space-y-5 pt-[190px]"
+        initial="hidden"
+        variants={sectionVariants}
+      >
         <EmptyInbox tone="first-letter" />
-      </div>
+      </motion.div>
     );
   }
 
@@ -88,26 +109,31 @@ export function InboxContent({
     <div className="space-y-5 pt-[190px]">
       <div className="relative mx-1 rounded-[22px] border border-border/70 bg-paper-soft/82 px-4 py-3 shadow-[0_9px_20px_rgba(89,64,33,0.10)] backdrop-blur-[1px]">
         <div className="absolute -top-2 left-8 h-4 w-4 rotate-45 border-l border-t border-border/60 bg-paper-soft/82" />
-        <p className="text-[11px] text-ink-muted">{"今日信箱"}</p>
+        <p className="text-[11px] text-ink-muted">{t("inbox.today")}</p>
         <div className="mt-1 flex items-end justify-between gap-3">
           <h2 className="text-[22px] font-semibold leading-tight text-ink">{notice.title}</h2>
           <span className="pb-0.5 text-xs text-ink-muted/80">{notice.subtitle}</span>
         </div>
       </div>
       <InboxTabs value={tab} onChange={setTab} />
-      {tab === "inbox" ? (
-        <div className="space-y-4">
-          {pendingLetters.length > 0 ? (
-            pendingLetters.map((letter, index) => (
-              <LetterLifecycleCard key={letter.id} letter={letter} index={index} />
-            ))
-          ) : (
-            <EmptyInbox tone="inbox" />
-          )}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {repliedLetters.length > 0 ? (
+      <AnimatePresence mode="wait">
+        <motion.div
+          animate="visible"
+          className="space-y-4"
+          exit="exit"
+          initial="hidden"
+          key={tab}
+          variants={sectionVariants}
+        >
+          {tab === "inbox" ? (
+            pendingLetters.length > 0 ? (
+              pendingLetters.map((letter, index) => (
+                <LetterLifecycleCard key={letter.id} letter={letter} index={index} />
+              ))
+            ) : (
+              <EmptyInbox tone="inbox" />
+            )
+          ) : repliedLetters.length > 0 ? (
             repliedLetters.map((letter, index) => (
               <LetterLifecycleCard
                 key={letter.id}
@@ -119,8 +145,8 @@ export function InboxContent({
           ) : (
             <EmptyInbox tone="sent" />
           )}
-        </div>
-      )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

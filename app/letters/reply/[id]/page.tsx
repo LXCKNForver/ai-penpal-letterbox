@@ -71,10 +71,10 @@ export default async function ReplyDetailPage({ params }: ReplyDetailPageProps) 
 
   return (
     <AppShell>
-      <div className="min-h-[calc(100dvh-96px)] px-page pb-8 pt-4">
+      <div className="min-h-[calc(100svh-var(--bottom-nav-height))] px-page pb-[calc(2rem+var(--safe-area-bottom))] pt-4 supports-[height:100dvh]:min-h-[calc(100dvh-var(--bottom-nav-height))]">
         <Link
           href="/inbox"
-          className="grid size-10 place-items-center rounded-button border border-border bg-paper-soft/80 text-ink"
+          className="grid size-11 place-items-center rounded-button border border-border bg-paper-soft/80 text-ink shadow-[0_6px_16px_rgba(86,62,33,0.08)] transition active:scale-[0.97] active:opacity-80"
           aria-label="返回信箱"
         >
           <ArrowLeft className="size-4" />

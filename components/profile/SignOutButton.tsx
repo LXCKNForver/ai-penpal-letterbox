@@ -4,8 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { ButtonLoading } from "@/src/components/loading";
+import { useI18n } from "@/src/i18n/useI18n";
 
 export function SignOutButton() {
+  const { t } = useI18n();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,13 +22,19 @@ export function SignOutButton() {
 
   return (
     <button
-      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-button border border-border bg-paper-soft/80 px-5 text-sm font-semibold text-ink-muted shadow-paper transition active:translate-y-px disabled:cursor-not-allowed disabled:opacity-55"
+      className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-button border border-border bg-paper-soft/80 px-5 text-sm font-semibold text-ink-muted shadow-paper transition active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-55"
       disabled={isLoading}
       onClick={handleSignOut}
       type="button"
     >
-      <LogOut className="size-4" />
-      {isLoading ? "\u6b63\u5728\u5408\u4e0a\u4fe1\u7bb1..." : "\u79bb\u5f00\u4fe1\u7bb1"}
+      {isLoading ? (
+        <ButtonLoading label={t("profile.signOut")} tone="dark" />
+      ) : (
+        <>
+          <LogOut className="size-4" />
+          {t("profile.signOut")}
+        </>
+      )}
     </button>
   );
 }

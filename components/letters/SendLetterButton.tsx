@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MailPlus } from "lucide-react";
 import { PrimaryActionButton } from "@/components/shared/PrimaryActionButton";
 import { sendLetter } from "@/app/letters/new/actions";
+import { ButtonLoading } from "@/src/components/loading";
 
 type SendLetterButtonProps = {
   content: string;
@@ -49,8 +50,14 @@ export function SendLetterButton({
         disabled={disabled || isSending}
         onClick={handleSend}
       >
-        <MailPlus className={isSending ? "size-4 opacity-75" : "size-4"} />
-        {isSending ? "\u6b63\u5728\u628a\u4fe1\u653e\u8fdb\u90ae\u7b52" : "\u5bc4\u51fa\u4fe1\u4ef6"}
+        {isSending ? (
+          <ButtonLoading label="正在把信放进邮筒…" />
+        ) : (
+          <>
+            <MailPlus className="size-4" />
+            {"\u5bc4\u51fa\u4fe1\u4ef6"}
+          </>
+        )}
       </PrimaryActionButton>
     </div>
   );

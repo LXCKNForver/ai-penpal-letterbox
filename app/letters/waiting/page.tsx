@@ -19,7 +19,7 @@ type WaitingPageProps = {
 
 function SentLetterFallback() {
   return (
-    <div className="min-h-[calc(100dvh-148px)] px-page pb-6 pt-12">
+    <div className="min-h-[calc(100svh-var(--bottom-nav-height)-56px)] px-page pb-[calc(1.5rem+var(--safe-area-bottom))] pt-12 supports-[height:100dvh]:min-h-[calc(100dvh-var(--bottom-nav-height)-56px)]">
       <PaperCard className="overflow-hidden border-border/60 bg-olive-soft p-card text-center shadow-floating">
         <div className="mx-auto grid size-20 place-items-center rounded-full border border-border/60 bg-paper-soft text-olive-deep shadow-[0_10px_24px_rgba(89,64,33,0.10)]">
           <Send className="size-8" strokeWidth={1.5} />
@@ -46,7 +46,7 @@ function SentLetterFallback() {
           </Link>
           <Link
             href="/profile"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-button border border-border bg-paper-soft/70 px-5 text-sm font-medium text-ink-muted"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-button border border-border bg-paper-soft/70 px-5 text-sm font-medium text-ink-muted transition active:scale-[0.985]"
           >
             今天先写到这里
           </Link>

@@ -13,7 +13,7 @@ export function PrimaryActionButton({
   return (
     <button
       className={cn(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-button bg-olive px-5 text-sm font-semibold text-paper-soft shadow-button transition active:translate-y-px disabled:cursor-not-allowed disabled:opacity-55",
+        "inline-flex min-h-12 items-center justify-center gap-2 rounded-button bg-olive px-5 text-sm font-semibold text-paper-soft shadow-button transition duration-200 active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-55",
         className
       )}
       type="button"

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FocusEvent } from "react";
+import { useFocusScrollIntoView } from "@/src/hooks/useFocusScrollIntoView";
+import { useI18n } from "@/src/i18n/useI18n";
 
 type LetterEditorProps = {
   value?: string;
@@ -8,8 +10,10 @@ type LetterEditorProps = {
 };
 
 export function LetterEditor({ value, onChange }: LetterEditorProps) {
+  const { t } = useI18n();
   const [localValue, setLocalValue] = useState("");
   const currentValue = value ?? localValue;
+  const scrollIntoViewOnFocus = useFocusScrollIntoView<HTMLTextAreaElement>();
 
   return (
     <div>
@@ -20,13 +24,14 @@ export function LetterEditor({ value, onChange }: LetterEditorProps) {
           setLocalValue(event.target.value);
           onChange?.(event.target.value);
         }}
-        placeholder={
-          "\u4eca\u5929\u60f3\u4ece\u54ea\u91cc\u5f00\u59cb\u5199\u5462\u2026\u2026\n\u4e0d\u7528\u4e00\u4e0b\u5b50\u8bf4\u6e05\u695a\uff0c\u6162\u6162\u5199\u5c31\u597d\u3002"
-        }
+        onFocus={(event: FocusEvent<HTMLTextAreaElement>) => {
+          scrollIntoViewOnFocus(event);
+        }}
+        placeholder={t("letters.placeholder")}
         maxLength={1000}
       />
       <div className="mt-4 flex items-center justify-between text-[11px] text-ink-muted/75">
-        <span>{"\u8fd9\u5c01\u4fe1\u4f1a\u6162\u6162\u9001\u5230\u5bf9\u65b9\u624b\u91cc"}</span>
+        <span>{t("letters.helper")}</span>
         <span>{currentValue.length}/1000</span>
       </div>
     </div>

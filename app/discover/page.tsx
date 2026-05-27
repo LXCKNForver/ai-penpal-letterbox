@@ -18,8 +18,10 @@ export default async function DiscoverPage() {
   return (
     <AppShell>
       <MobileHeader
-        title={"\u63a2\u7d22\u7b14\u53cb"}
+        title="探索笔友"
         subtitle="写信，让远方慢慢回应你"
+        titleKey="header.discover.title"
+        subtitleKey="header.discover.subtitle"
         action="sparkle"
       />
       <PageContainer className="px-0 pb-0 pt-0">

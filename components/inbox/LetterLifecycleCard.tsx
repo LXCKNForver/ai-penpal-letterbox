@@ -1,7 +1,10 @@
+"use client";
+
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { ChevronRight, Clock3, Mail, Waves } from "lucide-react";
-import { PaperCard } from "@/components/shared/PaperCard";
 import { WashiTape } from "@/components/decorative/WashiTape";
+import { PaperCard } from "@/components/shared/PaperCard";
 import { cn } from "@/lib/utils";
 import {
   getLetterWaitingStage,
@@ -105,77 +108,106 @@ export function LetterLifecycleCard({
       ? `/letters/reply/${reply.id}`
       : `/letters/waiting?letterId=${letter.id}`;
   const isUnread = Boolean(!isPending && reply && !reply.isRead);
+  const driftDuration = 4.8 + ((index ?? 0) % 3) * 0.45;
 
   return (
     <Link href={href} className="block">
-      <PaperCard
-        className={cn(
-          "overflow-visible border-border/55 bg-paper-soft/88 p-3.5 shadow-[0_8px_18px_rgba(89,64,33,0.075)] transition active:translate-y-px",
-          isPending && "bg-olive-soft/70",
-          isUnread && "border-stamp-red/25 bg-paper-soft shadow-[0_10px_22px_rgba(180,92,79,0.11)]",
-          highlight && "animate-fade-up ring-2 ring-olive/35",
-          indexRotation(index)
-        )}
+      <motion.div
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.992 }}
       >
-        <WashiTape
-          className="absolute -top-2 left-8 h-4 w-14 opacity-45"
-          tone={isPending ? "blue" : "sand"}
-        />
-        <span className="absolute right-3 top-2 rounded-pill border border-border/50 px-1.5 py-0.5 text-[8px] uppercase tracking-[0.12em] text-ink-muted/45">
-          {isPending ? getPendingStamp(stage) : isUnread ? "UNREAD" : "MAIL"}
-        </span>
-        <div className="flex items-center gap-3.5">
-          <div
-            className="relative grid size-14 shrink-0 place-items-center rounded-[14px] border border-dashed border-ink-muted/30 bg-paper-soft shadow-[0_7px_14px_rgba(89,64,33,0.10)]"
-            style={{ color: letter.penpal.color }}
-          >
-            {isPending ? (
-              <Waves className="size-6" strokeWidth={1.4} />
-            ) : (
-              <Mail className="size-6" strokeWidth={1.35} />
-            )}
-            <span
-              className="absolute -bottom-1.5 rounded-pill border border-paper-soft px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-[0.08em] text-paper-soft shadow-sm"
-              style={{ backgroundColor: letter.penpal.color }}
+        <PaperCard
+          className={cn(
+            "overflow-visible border-border/55 bg-paper-soft/88 p-3.5 shadow-[0_8px_18px_rgba(89,64,33,0.075)] transition-[border-color,box-shadow,background-color] duration-300 hover:border-[#e6d4ae] hover:shadow-[0_13px_26px_rgba(89,64,33,0.12)] active:translate-y-px",
+            isPending && "bg-olive-soft/70",
+            isUnread &&
+              "border-stamp-red/25 bg-paper-soft shadow-[0_10px_22px_rgba(180,92,79,0.11)]",
+            highlight && "animate-fade-up ring-2 ring-olive/35",
+            indexRotation(index)
+          )}
+        >
+          <WashiTape
+            className="absolute -top-2 left-8 h-4 w-14 opacity-45"
+            tone={isPending ? "blue" : "sand"}
+          />
+          <span className="absolute right-3 top-2 rounded-pill border border-border/50 px-1.5 py-0.5 text-[8px] uppercase tracking-[0.12em] text-ink-muted/45">
+            {isPending ? getPendingStamp(stage) : isUnread ? "UNREAD" : "MAIL"}
+          </span>
+          <div className="flex items-center gap-3.5">
+            <motion.div
+              animate={{ rotate: [0, -1, 1, 0], y: [0, -2, 0] }}
+              className="relative grid size-14 shrink-0 place-items-center rounded-[14px] border border-dashed border-ink-muted/30 bg-paper-soft shadow-[0_7px_14px_rgba(89,64,33,0.10)]"
+              style={{ color: letter.penpal.color }}
+              transition={{
+                rotate: {
+                  duration: driftDuration,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                },
+                y: {
+                  duration: driftDuration,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                },
+                scale: { duration: 0.14, ease: "easeOut" },
+                boxShadow: { duration: 0.28, ease: "easeOut" },
+              }}
+              whileHover={{
+                boxShadow: "0 11px 22px rgba(128, 91, 42, 0.16)",
+                scale: 1.03,
+                y: -2,
+              }}
+              whileTap={{ scale: 0.97 }}
             >
-              {isPending ? "WAIT" : isUnread ? "NEW" : "READ"}
-            </span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="truncate text-sm font-semibold text-ink">
+              {isPending ? (
+                <Waves className="size-6" strokeWidth={1.4} />
+              ) : (
+                <Mail className="size-6" strokeWidth={1.35} />
+              )}
+              <span
+                className="absolute -bottom-1.5 rounded-pill border border-paper-soft px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-[0.08em] text-paper-soft shadow-sm"
+                style={{ backgroundColor: letter.penpal.color }}
+              >
+                {isPending ? "WAIT" : isUnread ? "NEW" : "READ"}
+              </span>
+            </motion.div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <h2 className="truncate text-sm font-semibold text-ink">
+                  {isPending
+                    ? isUnknownPenpal
+                      ? "写给未知远方的信正在漂流中"
+                      : getDiscoveredPendingTitle(
+                          stage,
+                          letter.scheduledReplyAt,
+                          letter.penpal.name
+                        )
+                    : `来自 ${letter.penpal.name} 的回信`}
+                </h2>
+                {isUnread ? (
+                  <span className="size-2 rounded-full bg-stamp-red" aria-label="未读" />
+                ) : null}
+              </div>
+              <p className="mt-1 flex items-center gap-1 text-[11px] text-ink-muted">
+                <Clock3 className="size-3" />
                 {isPending
-                  ? isUnknownPenpal
-                    ? "写给未知远方的信正在漂流中"
-                    : getDiscoveredPendingTitle(
-                        stage,
-                        letter.scheduledReplyAt,
-                        letter.penpal.name
-                      )
-                  : `来自 ${letter.penpal.name} 的回信`}
-              </h2>
-              {isUnread ? (
-                <span className="size-2 rounded-full bg-stamp-red" aria-label="未读" />
-              ) : null}
+                  ? `预计回信：${formatDateTime(letter.scheduledReplyAt)}`
+                  : reply
+                    ? `收信时间：${formatDateTime(reply.createdAt)}`
+                    : `已收到 ${letter.penpal.name} 的回信`}
+              </p>
+              <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-ink-muted">
+                {preview}
+              </p>
             </div>
-            <p className="mt-1 flex items-center gap-1 text-[11px] text-ink-muted">
-              <Clock3 className="size-3" />
-              {isPending
-                ? `预计回信：${formatDateTime(letter.scheduledReplyAt)}`
-                : reply
-                  ? `收信时间：${formatDateTime(reply.createdAt)}`
-                  : `已收到 ${letter.penpal.name} 的回信`}
-            </p>
-            <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-ink-muted">
-              {preview}
-            </p>
+            <div className="flex shrink-0 flex-col items-end gap-2 text-[11px] text-ink-muted/75">
+              {formatDateTime(hasReceivedReply && reply ? reply.createdAt : letter.createdAt)}
+              <ChevronRight className="size-4" />
+            </div>
           </div>
-          <div className="flex shrink-0 flex-col items-end gap-2 text-[11px] text-ink-muted/75">
-            {formatDateTime(hasReceivedReply && reply ? reply.createdAt : letter.createdAt)}
-            <ChevronRight className="size-4" />
-          </div>
-        </div>
-      </PaperCard>
+        </PaperCard>
+      </motion.div>
     </Link>
   );
 }

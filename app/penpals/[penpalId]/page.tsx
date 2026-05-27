@@ -4,7 +4,13 @@ import { MobileHeader } from "@/components/layout/MobileHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PaperCard } from "@/components/shared/PaperCard";
 import { createClient } from "@/lib/supabase/server";
-import { getUserPenpals } from "@/src/lib/db/userPenpals";
+import { getUserLetters } from "@/src/lib/db/letters";
+import { getRepliesByUser } from "@/src/lib/db/replies";
+import {
+  getUserPenpalDiscoveries,
+  getUserPenpals,
+} from "@/src/lib/db/userPenpals";
+import { derivePenpalRelationshipSummary } from "@/src/lib/relationship";
 
 type PenpalDetailPageProps = {
   params: Promise<{
@@ -18,27 +24,57 @@ export default async function PenpalDetailPage({ params }: PenpalDetailPageProps
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const penpals = user ? await getUserPenpals(user.id) : [];
+  const [penpals, letters, replies, discoveries] = user
+    ? await Promise.all([
+        getUserPenpals(user.id),
+        getUserLetters(user.id),
+        getRepliesByUser(user.id),
+        getUserPenpalDiscoveries(user.id),
+      ])
+    : [[], [], [], []];
   const penpal = penpals.find((item) => item.id === penpalId);
+  const relationship = derivePenpalRelationshipSummary({
+    discoveredAt:
+      discoveries.find((discovery) => discovery.penpalId === penpalId)?.discoveredAt ?? null,
+    received: replies
+      .filter((reply) => reply.penpalId === penpalId)
+      .map((reply) => ({
+        content: reply.content,
+        createdAt: reply.createdAt,
+        id: reply.id,
+      })),
+    sent: letters
+      .filter((letter) => letter.penpalId === penpalId)
+      .map((letter) => ({
+        content: letter.content,
+        createdAt: letter.createdAt,
+        id: letter.id,
+      })),
+  });
 
   return (
     <AppShell>
       <MobileHeader
-        title={penpal ? `${penpal.name} \u7684\u5c0f\u89d2\u843d` : "\u672a\u77e5\u7684\u6765\u4fe1"}
-        subtitle={penpal ? `${penpal.country} · ${penpal.city}` : "\u4e00\u5c01\u8ff7\u8def\u7684\u4fe1"}
+        title={penpal ? `${penpal.name} 的小角落` : "未知的来信"}
+        subtitle={
+          penpal
+            ? `${penpal.country} · ${penpal.city} · ${relationship.knownLabel}`
+            : "一封迷路的信"
+        }
         backHref="/discover"
         action="none"
+        className="bg-paper/62 shadow-[0_8px_24px_rgba(86,62,33,0.06)]"
       />
       <PageContainer>
         {penpal ? (
-          <PenpalDetailContent penpal={penpal} />
+          <PenpalDetailContent penpal={penpal} relationship={relationship} />
         ) : (
           <PaperCard className="py-12 text-center">
             <p className="text-base font-semibold text-ink">
-              {"\u8fd9\u5c01\u4fe1\u597d\u50cf\u5bc4\u5230\u4e86\u672a\u77e5\u7684\u5730\u65b9\u3002"}
+              这封信好像寄到了未知的地方。
             </p>
             <p className="mx-auto mt-3 max-w-56 text-sm leading-6 text-ink-muted">
-              {"\u4e5f\u8bb8\u518d\u56de\u5230\u5730\u56fe\u4e0a\u770b\u770b\uff0c\u5c31\u80fd\u627e\u5230\u5b83\u8981\u53bb\u7684\u8def\u3002"}
+              也许再回到地图上看看，就能找到它要去的路。
             </p>
           </PaperCard>
         )}

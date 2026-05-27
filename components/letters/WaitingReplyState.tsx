@@ -70,10 +70,10 @@ export function WaitingReplyState({ letter }: WaitingReplyStateProps) {
     process.env.NODE_ENV === "development" && letter.status === "pending" && !reply;
 
   return (
-    <div className="min-h-[calc(100dvh-148px)] px-page pb-6 pt-4">
+    <div className="min-h-[calc(100svh-var(--bottom-nav-height)-56px)] px-page pb-[calc(1.5rem+var(--safe-area-bottom))] pt-4 supports-[height:100dvh]:min-h-[calc(100dvh-var(--bottom-nav-height)-56px)]">
       <Link
         href="/inbox"
-        className="grid size-10 place-items-center rounded-button border border-border bg-paper-soft/80 text-ink"
+        className="grid size-11 place-items-center rounded-button border border-border bg-paper-soft/80 text-ink shadow-[0_6px_16px_rgba(86,62,33,0.08)] transition active:scale-[0.97] active:opacity-80"
         aria-label={"\u8fd4\u56de\u4fe1\u7bb1"}
       >
         <ArrowLeft className="size-4" />
@@ -151,7 +151,7 @@ export function WaitingReplyState({ letter }: WaitingReplyStateProps) {
           </Link>
           <Link
             href="/profile"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-button border border-border bg-paper-soft/70 px-5 text-sm font-medium text-ink-muted"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-button border border-border bg-paper-soft/70 px-5 text-sm font-medium text-ink-muted transition active:scale-[0.985]"
           >
             {"今天先写到这里"}
           </Link>

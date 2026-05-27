@@ -23,7 +23,7 @@ export function ReplyActionBar() {
           <button
             key={action.label}
             className={cn(
-              "flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-[#d8c6a5] bg-[#fff8e8] text-xs font-medium text-[#69583e]",
+              "flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-[#d8c6a5] bg-[#fff8e8] text-xs font-medium text-[#69583e] transition active:scale-[0.985]",
               selected && "border-[#87985f] bg-[#e6edcf] text-[#5f713b]"
             )}
             type="button"

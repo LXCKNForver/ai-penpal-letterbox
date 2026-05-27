@@ -8,7 +8,7 @@ type PageContainerProps = {
 
 export function PageContainer({ children, className }: PageContainerProps) {
   return (
-    <main className={cn("px-page pb-6 pt-2", className)}>
+    <main className={cn("px-page pb-[calc(1.5rem+var(--safe-area-bottom))] pt-2", className)}>
       {children}
     </main>
   );

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MailCheck } from "lucide-react";
+import { ButtonLoading } from "@/src/components/loading";
 
 type SimulateReplyButtonProps = {
   letterId: string;
@@ -73,26 +74,34 @@ export function SimulateReplyButton({ letterId }: SimulateReplyButtonProps) {
       ) : null}
       <div className="grid gap-2">
         <button
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-button border border-border/75 bg-paper-soft/85 px-5 text-sm font-semibold text-ink shadow-[0_8px_18px_rgba(89,64,33,0.09)] transition active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-button border border-border/75 bg-paper-soft/85 px-5 text-sm font-semibold text-ink shadow-[0_8px_18px_rgba(89,64,33,0.09)] transition active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isCreating}
           type="button"
           onClick={() => generateReply(false)}
         >
-          <MailCheck className="size-4" />
-          {isCreating && activeMode === "timed"
-            ? "正在检查远方来信"
-            : "模拟收到回信（按时间）"}
+          {isCreating && activeMode === "timed" ? (
+            <ButtonLoading label="正在检查远方来信…" tone="dark" />
+          ) : (
+            <>
+              <MailCheck className="size-4" />
+              {"模拟收到回信（按时间）"}
+            </>
+          )}
         </button>
         <button
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-button border border-olive-deep/20 bg-olive px-5 text-sm font-semibold text-paper-soft shadow-button transition active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-button border border-olive-deep/20 bg-olive px-5 text-sm font-semibold text-paper-soft shadow-button transition active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isCreating}
           type="button"
           onClick={() => generateReply(true)}
         >
-          <MailCheck className="size-4" />
-          {isCreating && activeMode === "force"
-            ? "正在强制投递回信"
-            : "强制收到回信"}
+          {isCreating && activeMode === "force" ? (
+            <ButtonLoading label="正在投递回信…" />
+          ) : (
+            <>
+              <MailCheck className="size-4" />
+              {"强制收到回信"}
+            </>
+          )}
         </button>
       </div>
     </div>

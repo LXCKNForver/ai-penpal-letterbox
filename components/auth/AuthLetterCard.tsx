@@ -8,6 +8,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
+import { ButtonLoading } from "@/src/components/loading";
 
 type AuthLetterCardProps = {
   mode: "login" | "register";
@@ -144,7 +145,7 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
   return (
     <motion.main
       animate={{ opacity: 1 }}
-      className="relative min-h-dvh overflow-hidden bg-[#071426] text-[#fff8e8]"
+      className="relative min-h-svh overflow-hidden bg-[#071426] text-[#fff8e8] supports-[height:100dvh]:min-h-dvh"
       initial={{ opacity: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
@@ -199,7 +200,7 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
 
       <motion.section
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-30 -mt-12 rounded-t-[36px] bg-[#f8efd9] px-6 pb-9 pt-8 text-[#3f3428] shadow-[0_-20px_54px_rgba(5,13,27,0.28)]"
+        className="relative z-30 -mt-12 rounded-t-[36px] bg-[#f8efd9] px-6 pb-[calc(2.25rem+var(--safe-area-bottom))] pt-8 text-[#3f3428] shadow-[0_-20px_54px_rgba(5,13,27,0.28)]"
         initial={{ opacity: 0, y: 34 }}
         transition={{ delay: 0.24, duration: 0.84, ease: "easeOut" }}
       >
@@ -257,7 +258,7 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
             type="submit"
             whileTap={isLoading ? undefined : { scale: 0.985 }}
           >
-            {isLoading ? "正在整理信箱..." : content.button}
+            {isLoading ? <ButtonLoading label="正在整理信箱…" /> : content.button}
           </motion.button>
         </form>
 

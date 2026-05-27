@@ -6,6 +6,7 @@ import { LetterEditor } from "@/components/letters/LetterEditor";
 import { LetterPaper } from "@/components/letters/LetterPaper";
 import { PrimaryActionButton } from "@/components/shared/PrimaryActionButton";
 import { sendUnknownLetter } from "@/app/letters/unknown/actions";
+import { ButtonLoading } from "@/src/components/loading";
 
 export function UnknownLetterForm() {
   const [content, setContent] = useState("");
@@ -44,8 +45,14 @@ export function UnknownLetterForm() {
         disabled={isDisabled}
         onClick={handleSend}
       >
-        <Send className={isPending ? "size-4 opacity-75" : "size-4"} />
-        {isPending ? "正在把信寄向未知远方" : "把信寄向未知远方"}
+        {isPending ? (
+          <ButtonLoading label="正在把信寄向未知远方…" />
+        ) : (
+          <>
+            <Send className="size-4" />
+            {"把信寄向未知远方"}
+          </>
+        )}
       </PrimaryActionButton>
     </div>
   );

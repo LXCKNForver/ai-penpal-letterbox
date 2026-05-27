@@ -17,6 +17,8 @@ export default async function LettersPage() {
       <MobileHeader
         title={"\u9009\u62e9\u7b14\u53cb"}
         subtitle={"\u4e3a\u4e00\u5c01\u65b0\u4fe1\u627e\u5230\u6536\u4fe1\u4eba"}
+        titleKey="header.letters.title"
+        subtitleKey="header.letters.subtitle"
         backHref="/inbox"
         action="none"
       />

@@ -70,14 +70,6 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (pathname === "/" && !user) {
-    return redirectWithCookies(request, response, "/auth/login");
-  }
-
-  if (pathname === "/" && user) {
-    return redirectWithCookies(request, response, "/inbox");
-  }
-
   if (!user && isRoute(pathname, protectedRoutes)) {
     return redirectWithCookies(request, response, "/auth/login");
   }

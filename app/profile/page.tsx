@@ -17,7 +17,7 @@ export default async function ProfilePage() {
     ? await Promise.all([
         supabase
           .from("profiles")
-          .select("nickname")
+          .select("nickname, avatar_url")
           .eq("id", user.id)
           .maybeSingle(),
         getUserPenpals(user.id),
@@ -32,9 +32,17 @@ export default async function ProfilePage() {
       <MobileHeader
         title={"\u6211\u7684\u4fe1\u7bb1\u89d2\u843d"}
         subtitle={"\u6574\u7406\u4fe1\u4ef6\u3001\u7b14\u53cb\u548c\u56de\u5fc6"}
+        titleKey="header.profile.title"
+        subtitleKey="header.profile.subtitle"
       />
       <PageContainer>
-        <ProfilePlaceholder letters={letters} nickname={profile?.nickname} penpals={penpals} />
+        <ProfilePlaceholder
+          avatarUrl={profile?.avatar_url}
+          letters={letters}
+          nickname={profile?.nickname}
+          penpals={penpals}
+          userId={user?.id}
+        />
         <div className="mt-5">
           <SignOutButton />
         </div>

@@ -10,6 +10,8 @@ export default function FirstLetterPage() {
       <MobileHeader
         title={"\u5199\u7ed9\u8fdc\u65b9\u7684\u7b2c\u4e00\u5c01\u4fe1"}
         subtitle={"\u8fd9\u5c01\u4fe1\u4f1a\u5148\u5bc4\u7ed9\u4e16\u754c"}
+        titleKey="header.firstLetter.title"
+        subtitleKey="header.firstLetter.subtitle"
         backHref="/discover"
         action="none"
       />

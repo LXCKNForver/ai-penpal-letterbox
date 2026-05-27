@@ -6,6 +6,7 @@ import { LetterEditor } from "@/components/letters/LetterEditor";
 import { LetterPaper } from "@/components/letters/LetterPaper";
 import { PrimaryActionButton } from "@/components/shared/PrimaryActionButton";
 import { sendFirstLetter } from "@/app/letters/first/actions";
+import { ButtonLoading } from "@/src/components/loading";
 
 export function FirstLetterForm() {
   const [content, setContent] = useState("");
@@ -44,8 +45,14 @@ export function FirstLetterForm() {
         disabled={isDisabled}
         onClick={handleSend}
       >
-        <Send className={isPending ? "size-4 opacity-75" : "size-4"} />
-        {isPending ? "\u6b63\u5728\u628a\u4fe1\u5bc4\u5411\u8fdc\u65b9" : "\u628a\u4fe1\u5bc4\u5411\u8fdc\u65b9"}
+        {isPending ? (
+          <ButtonLoading label="正在把信寄向远方…" />
+        ) : (
+          <>
+            <Send className="size-4" />
+            {"\u628a\u4fe1\u5bc4\u5411\u8fdc\u65b9"}
+          </>
+        )}
       </PrimaryActionButton>
     </div>
   );

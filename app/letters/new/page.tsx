@@ -35,6 +35,8 @@ export default async function NewLetterPage({ searchParams }: NewLetterPageProps
       <MobileHeader
         title={"\u5199\u4e00\u5c01\u4fe1"}
         subtitle={"\u628a\u60f3\u8bf4\u7684\u8bdd\u6162\u6162\u5bc4\u51fa\u53bb"}
+        titleKey="header.write.title"
+        subtitleKey="header.write.subtitle"
         backHref="/letters"
         action="none"
       />
@@ -51,7 +53,7 @@ export default async function NewLetterPage({ searchParams }: NewLetterPageProps
             </p>
             <Link
               href="/letters"
-              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-button border border-border bg-paper-soft px-5 text-sm font-medium text-ink-muted"
+              className="mt-6 inline-flex min-h-12 items-center justify-center rounded-button border border-border bg-paper-soft px-5 text-sm font-medium text-ink-muted transition active:scale-[0.985]"
             >
               {"\u56de\u5230\u7b14\u53cb\u5217\u8868"}
             </Link>
