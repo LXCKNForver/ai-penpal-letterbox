@@ -60,10 +60,10 @@ function FloatingBottle() {
         <Image
           alt="漂流瓶"
           className="h-full w-full object-contain drop-shadow-[0_20px_30px_rgba(181,218,245,0.34)] -mt-25"
+          fetchPriority="high"
           height={935}
-          priority
           sizes="(max-width: 430px) 224px, 248px"
-          src="/assets/auth/bottle1.png"
+          src="/assets/auth/bottle1.webp"
           width={808}
         />
       </motion.div>
@@ -159,9 +159,11 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
           alt="夜晚海面"
           className="object-cover object-[center_top]"
           fill
-          priority
+          fetchPriority="high"
+          preload
           sizes="430px"
-          src="/assets/auth/loginbg.png"
+          src="/assets/auth/loginbg.webp"
+          unoptimized
         />
       </motion.div>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,11,24,0.56)_0%,rgba(7,20,38,0.44)_34%,rgba(9,24,43,0.68)_64%,rgba(248,239,217,0.24)_100%)]" />
@@ -179,10 +181,10 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
             <Image
               alt="慢慢信箱"
               className="h-full w-full object-contain p-1"
+              fetchPriority="high"
               height={72}
-              priority
               sizes="72px"
-              src="/assets/auth/logo.png"
+              src="/assets/auth/logo.webp"
               width={72}
             />
           </div>
@@ -264,7 +266,7 @@ export function AuthLetterCard({ mode }: AuthLetterCardProps) {
 
         <p className="mt-7 text-center text-sm text-[#7c6b51]">
           {content.footerText}{" "}
-          <Link className="font-semibold text-[#0F4C81]" href={content.footerHref}>
+          <Link className="font-semibold text-[#0F4C81]" href={content.footerHref} prefetch>
             {content.footerLink}
           </Link>
         </p>

@@ -38,8 +38,10 @@ export function FloatingBottleLoading({
           alt=""
           className="object-contain"
           fill
+          loading="lazy"
           sizes={size === "lg" ? "112px" : size === "md" ? "80px" : "56px"}
-          src="/assets/auth/bottle1.png"
+          src="/assets/auth/bottle1.webp"
+          unoptimized
         />
       </motion.div>
       {label ? (

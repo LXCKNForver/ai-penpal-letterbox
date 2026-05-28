@@ -13,7 +13,7 @@ export function MobilePageTransition({ children }: MobilePageTransitionProps) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence initial={false} mode="wait">
+    <AnimatePresence initial={false}>
       <motion.div key={pathname} className="min-h-full" {...pageFadeSlide}>
         {children}
       </motion.div>

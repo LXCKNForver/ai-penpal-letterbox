@@ -49,6 +49,7 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch
               className={cn(
                 "flex min-h-12 min-w-0 flex-col items-center justify-center gap-1 rounded-card px-1 py-1.5 text-[11px] font-medium text-ink-muted transition active:scale-[0.97] active:opacity-80",
                 isActive && "text-olive-deep"
@@ -71,17 +72,14 @@ export function BottomNav() {
                   animate={
                     isActive
                       ? {
-                          scale: 1.04,
-                          y: [0, -1.5, 0],
+                          scale: 1,
+                          y: 0,
                         }
                       : { scale: 1, y: 0 }
                   }
                   className="relative z-10 inline-flex"
-                  transition={
-                    isActive
-                      ? { duration: 4.4, ease: "easeInOut", repeat: Infinity }
-                      : softSpring
-                  }
+                  transition={softSpring}
+                  whileTap={{ scale: 0.96 }}
                 >
                   <Icon className="size-4" />
                 </motion.span>

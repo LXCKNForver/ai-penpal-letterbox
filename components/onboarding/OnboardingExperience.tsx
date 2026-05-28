@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 
 const onboardingStorageKey = "hasSeenOnboarding";
@@ -21,24 +21,24 @@ const slides: OnboardingSlide[] = [
     id: 0,
     title: "把想说的话，慢慢写下来",
     subtitle: "总会有人，在世界另一端认真读完你的心事。",
-    backgroundSrc: "/assets/onboarding/onboardingbg1.png",
-    artSrc: "/assets/onboarding/onboarding1pic.png",
+    backgroundSrc: "/assets/onboarding/onboardingbg1.webp",
+    artSrc: "/assets/onboarding/onboarding1pic.webp",
     artClassName: "h-[290px] w-[326px]",
   },
   {
     id: 1,
     title: "回信不会立刻到达",
     subtitle: "但等待本身，也是漂流的一部分。",
-    backgroundSrc: "/assets/onboarding/onboardingbg2.png",
-    artSrc: "/assets/onboarding/onboarding2pic.png",
+    backgroundSrc: "/assets/onboarding/onboardingbg2.webp",
+    artSrc: "/assets/onboarding/onboarding2pic.webp",
     artClassName: "h-[302px] w-[318px]",
   },
   {
     id: 2,
     title: "总会有人，温柔回应你的漂流",
     subtitle: "现在开始你的第一封信吧。",
-    backgroundSrc: "/assets/onboarding/onboardingbg3.png",
-    artSrc: "/assets/onboarding/onboarding3pic.png",
+    backgroundSrc: "/assets/onboarding/onboardingbg3.webp",
+    artSrc: "/assets/onboarding/onboarding3pic.webp",
     artClassName: "h-[352px] w-[306px]",
   },
 ];
@@ -99,6 +99,23 @@ const starParticles = [
   { delay: 2.1, duration: 6.2, left: "91%", size: "h-1.5 w-1.5", top: "18%" },
 ];
 
+const preloadedOnboardingImages = new Set<string>();
+
+function preloadOnboardingImage(src: string) {
+  if (preloadedOnboardingImages.has(src)) {
+    return;
+  }
+
+  preloadedOnboardingImages.add(src);
+
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = src;
+  link.setAttribute("fetchpriority", "low");
+  document.head.appendChild(link);
+}
+
 function saveOnboardingSeen() {
   try {
     window.localStorage.setItem(onboardingStorageKey, "true");
@@ -121,7 +138,18 @@ export function OnboardingExperience() {
         }
       : {
           y: [0, -6, 0],
-        };
+      };
+
+  useEffect(() => {
+    const nextSlide = slides[index + 1];
+
+    if (!nextSlide) {
+      return;
+    }
+
+    preloadOnboardingImage(nextSlide.backgroundSrc);
+    preloadOnboardingImage(nextSlide.artSrc);
+  }, [index]);
 
   function finishOnboarding() {
     saveOnboardingSeen();
@@ -177,9 +205,11 @@ export function OnboardingExperience() {
               alt=""
               className="object-cover object-center"
               fill
-              priority
+              fetchPriority={index === 0 ? "high" : "auto"}
+              preload={index === 0}
               sizes="430px"
               src={slide.backgroundSrc}
+              unoptimized
             />
           </motion.div>
 
@@ -330,7 +360,8 @@ export function OnboardingExperience() {
                   alt=""
                   className="bg-transparent object-contain drop-shadow-[0_24px_38px_rgba(2,8,18,0.42)] drop-shadow-[0_0_22px_rgba(202,231,249,0.18)]"
                   fill
-                  priority
+                  fetchPriority={index === 0 ? "high" : "auto"}
+                  preload={index === 0}
                   sizes="(max-width: 430px) calc(100vw - 32px), 326px"
                   src={slide.artSrc}
                   unoptimized

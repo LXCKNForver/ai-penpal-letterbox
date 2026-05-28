@@ -45,6 +45,7 @@ export function MobileHeader({
           {backHref ? (
             <Link
               href={backHref}
+              prefetch
               className="grid size-11 shrink-0 place-items-center rounded-button border border-border bg-paper-soft/80 text-ink shadow-[0_6px_16px_rgba(86,62,33,0.08)] transition active:scale-[0.97] active:opacity-80"
               aria-label={"\u8fd4\u56de"}
             >

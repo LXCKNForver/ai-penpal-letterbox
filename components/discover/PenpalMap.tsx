@@ -10,7 +10,6 @@ import { EncounterButton } from "@/components/discover/EncounterButton";
 import { MapPin } from "@/components/discover/MapPin";
 import { PenpalPreviewCard } from "@/components/discover/PenpalPreviewCard";
 import type { EncounterStatus } from "@/src/lib/db/encounters";
-import discoverMap from "@/.docs/discoverMap.png";
 
 type PenpalMapProps = {
   encounterStatus: EncounterStatus | null;
@@ -120,11 +119,10 @@ export function PenpalMap({ encounterStatus, penpals }: PenpalMapProps) {
           transition={{ duration: 48, ease: "easeInOut", repeat: Infinity }}
         >
           <Image
-            src={discoverMap}
+            src="/assets/app/discover-map.webp"
             alt=""
             fill
-            priority
-            sizes="430px"
+            sizes="100vw"
             className="object-cover object-center opacity-95 [mask-image:linear-gradient(to_bottom,transparent_0%,black_8%,black_78%,transparent_100%)]"
           />
         </motion.div>

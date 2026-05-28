@@ -8,7 +8,7 @@ type DelayedLoadingProps = {
   delay?: number;
 };
 
-export function DelayedLoading({ children, delay = 300 }: DelayedLoadingProps) {
+export function DelayedLoading({ children, delay = 500 }: DelayedLoadingProps) {
   const [shouldShow, setShouldShow] = useState(false);
 
   useEffect(() => {

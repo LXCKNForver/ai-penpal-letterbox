@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AppRouteShell } from "@/components/layout/AppRouteShell";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/src/i18n/I18nProvider";
 import "./globals.css";
@@ -17,7 +18,7 @@ export default function RootLayout({
     <html lang="zh-CN" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <I18nProvider>
-          {children}
+          <AppRouteShell>{children}</AppRouteShell>
           <Toaster />
         </I18nProvider>
       </body>

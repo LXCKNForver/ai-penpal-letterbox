@@ -2,7 +2,6 @@ import Image from "next/image";
 import { PaperNoise } from "@/components/decorative/PaperNoise";
 import { InboxAmbientMotion } from "@/components/inbox/InboxAmbientMotion";
 import { InboxContent } from "@/components/inbox/InboxContent";
-import { AppShell } from "@/components/layout/AppShell";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { createClient } from "@/lib/supabase/server";
@@ -13,7 +12,6 @@ import {
   getUserPenpals,
   isPenpalDiscoveredForLetter,
 } from "@/src/lib/db/userPenpals";
-import inboxBackground from "@/.docs/bg1.png";
 
 type InboxPageProps = {
   searchParams: Promise<{
@@ -67,16 +65,16 @@ export default async function InboxPage({ searchParams }: InboxPageProps) {
   }));
 
   return (
-    <AppShell>
+    <>
       <div className="relative min-h-[calc(100svh-var(--bottom-nav-height))] overflow-x-hidden supports-[height:100dvh]:min-h-[calc(100dvh-var(--bottom-nav-height))]">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] overflow-hidden">
           <Image
-            src={inboxBackground}
+            src="/assets/app/inbox-bg.webp"
             alt=""
             fill
             priority
-            sizes="430px"
-            className="object-cover object-top opacity-88"
+            sizes="100vw"
+            className="object-cover object-top"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,239,217,0.06)_0%,rgba(248,239,217,0.12)_44%,rgba(248,239,217,0.72)_78%,var(--paper)_100%)]" />
           <InboxAmbientMotion />
@@ -98,6 +96,6 @@ export default async function InboxPage({ searchParams }: InboxPageProps) {
           />
         </PageContainer>
       </div>
-    </AppShell>
+    </>
   );
 }

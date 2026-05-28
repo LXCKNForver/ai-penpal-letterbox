@@ -1,5 +1,4 @@
 import { PenpalMap } from "@/components/discover/PenpalMap";
-import { AppShell } from "@/components/layout/AppShell";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { createClient } from "@/lib/supabase/server";
@@ -16,7 +15,7 @@ export default async function DiscoverPage() {
     : [[], null];
 
   return (
-    <AppShell>
+    <>
       <MobileHeader
         title="探索笔友"
         subtitle="写信，让远方慢慢回应你"
@@ -27,6 +26,6 @@ export default async function DiscoverPage() {
       <PageContainer className="px-0 pb-0 pt-0">
         <PenpalMap encounterStatus={encounterStatus} penpals={penpals} />
       </PageContainer>
-    </AppShell>
+    </>
   );
 }
